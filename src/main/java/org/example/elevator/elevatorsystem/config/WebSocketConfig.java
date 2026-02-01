@@ -22,6 +22,6 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         // Register "/ws" as the STOMP endpoint.
         // setAllowedOrigins is necessary for cross-origin requests (e.g., from a React dev server)
-        registry.addEndpoint("/ws").setAllowedOrigins("http://localhost:3000");
+        registry.addEndpoint("/ws").setAllowedOrigins("http://localhost:3000").withSockJS();
     }
 }
