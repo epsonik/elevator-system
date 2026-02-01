@@ -17,6 +17,18 @@ const ElevatorComponent: React.FC<ElevatorProps> = ({ elevator, totalFloors, sel
     const isMoving = elevator.status === 'MOVING';
     const doorsOpen = elevator.status === 'DOORS_OPEN';
 
+    const getDirectionSymbol = () => {
+        if (elevator.direction === 'UP') return '▲';
+        if (elevator.direction === 'DOWN') return '▼';
+        return '';
+    };
+
+    const getStatusText = () => {
+        if (doorsOpen) return 'Doors Open';
+        if (isMoving) return 'Moving';
+        return 'Idle';
+    };
+
     return (
         <div
             className={`elevator ${isMoving ? 'moving' : ''} ${doorsOpen ? 'doors-open' : ''}`}
@@ -26,10 +38,20 @@ const ElevatorComponent: React.FC<ElevatorProps> = ({ elevator, totalFloors, sel
                 filter: `hue-rotate(${elevator.id * 60}deg)`
             }}
         >
+            {isMoving && getDirectionSymbol() && (
+                <div className="elevator-direction-indicator">{getDirectionSymbol()}</div>
+            )}
             <div className="elevator-info">
-                <span>{`ID: ${elevator.id}`}</span>
-                <span>{`FL: ${elevator.currentFloor}`}</span>
-                <span className="elevator-status">{`${elevator.direction} | ${elevator.status}`}</span>
+                <span className="elevator-id">Elevator {elevator.id + 1}</span>
+                <span className="elevator-floor">Floor {elevator.currentFloor}</span>
+                <span className="elevator-status">{getStatusText()}</span>
+                {elevator.targetFloors.length > 0 && (
+                    <div className="target-floors">
+                        {elevator.targetFloors.map(floor => (
+                            <span key={floor} className="target-floor-badge">→{floor}</span>
+                        ))}
+                    </div>
+                )}
             </div>
             <div className="elevator-panel">
                 <div className="panel-title">Select Floor</div>
@@ -39,6 +61,7 @@ const ElevatorComponent: React.FC<ElevatorProps> = ({ elevator, totalFloors, sel
                             key={floorNum}
                             className={`panel-button ${elevator.targetFloors.includes(floorNum) ? 'selected' : ''}`}
                             onClick={() => selectFloor(elevator.id, floorNum)}
+                            disabled={elevator.currentFloor === floorNum}
                         >
                             {floorNum}
                         </button>

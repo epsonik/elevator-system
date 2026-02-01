@@ -19,6 +19,13 @@ function App() {
                 </div>
             </header>
             <main>
+                <div className="instructions">
+                    <h3>How to Use</h3>
+                    <p>
+                        <strong>Call an Elevator:</strong> Click the ▲ or ▼ buttons next to any floor. 
+                        <strong style={{marginLeft: '1rem'}}>Select Destination:</strong> Click on an elevator car to select your destination floor.
+                    </p>
+                </div>
                 <Building
                     floors={NUM_FLOORS}
                     // The initial elevators array might be empty, so we create placeholders

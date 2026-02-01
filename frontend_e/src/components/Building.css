@@ -1,13 +1,18 @@
 .building-container {
-    max-width: 90vw;
+    max-width: 1000px;
     margin: 0 auto;
-    border: 2px solid #333;
-    background-color: #f4f4f4;
+    border: none;
+    background-color: rgba(255, 255, 255, 0.95);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    backdrop-filter: blur(10px);
 }
 
 .building-grid {
     display: grid;
-    position: relative; /* Crucial for positioning elevators */
+    position: relative;
+    padding: 20px;
 }
 
 .floor-controls {
@@ -15,133 +20,280 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    border-right: 1px solid #ccc;
-    border-bottom: 1px dashed #ccc;
-    background-color: #e9ecef;
-    font-size: 0.8rem;
+    border-right: 2px solid #e2e8f0;
+    border-bottom: 1px solid #e2e8f0;
+    background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+    font-size: 0.9rem;
+    padding: 15px 10px;
+    gap: 8px;
 }
 
 .floor-label {
-    font-weight: bold;
-    margin-bottom: 5px;
+    font-weight: 700;
+    font-size: 1rem;
+    color: #2d3748;
+    margin-bottom: 8px;
 }
 
 .call-buttons {
     display: flex;
-    gap: 4px;
+    flex-direction: column;
+    gap: 8px;
 }
 
 .call-btn {
-    width: 25px;
-    height: 25px;
-    border: 1px solid #555;
-    border-radius: 50%;
+    width: 42px;
+    height: 42px;
+    border: 2px solid transparent;
+    border-radius: 8px;
     cursor: pointer;
-    background-color: #fff;
+    background: white;
     font-weight: bold;
+    font-size: 1.2rem;
     display: flex;
     align-items: center;
     justify-content: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease;
 }
 
-.call-btn.up { color: #28a745; }
-.call-btn.down { color: #dc3545; }
-.call-btn:active { background-color: #ddd; }
-.call-btn:disabled { background-color: #e9ecef; cursor: not-allowed; }
+.call-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.call-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.call-btn.up { 
+    color: white;
+    background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+    border-color: #38a169;
+}
+
+.call-btn.down { 
+    color: white;
+    background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+    border-color: #e53e3e;
+}
+
+.call-btn:disabled { 
+    background: #e2e8f0;
+    cursor: not-allowed;
+    color: #a0aec0;
+    box-shadow: none;
+}
 
 .floor-line {
-    border-bottom: 1px dashed #ccc;
-    border-right: 1px solid #ccc;
+    border-bottom: 1px solid #e2e8f0;
+    border-right: 2px solid #e2e8f0;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.02), transparent);
 }
 
 .elevator-shaft {
-    position: relative; /* Contains the absolutely positioned elevator */
-    border-right: 1px solid #ccc;
+    position: relative;
+    border-right: 2px solid #e2e8f0;
+    background: linear-gradient(to right, rgba(0,0,0,0.02), transparent);
 }
 
 /* --- Elevator Component Specific CSS --- */
 
 .elevator {
     position: absolute;
-    left: 10%;
-    width: 80%;
-    height: var( --floor-height, 10%); /* Use CSS variable for height */
-    background-color: #3498db;
-    border: 3px solid #2980b9;
+    left: 8%;
+    width: 84%;
+    height: var(--floor-height, 10%);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    border-radius: 8px;
     box-sizing: border-box;
-    transition: top 1s linear; /* Smooth movement animation */
+    transition: top 1s linear;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     color: white;
-    font-size: 0.7rem;
+    font-size: 0.85rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    overflow: visible;
+}
+
+.elevator:hover {
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    transform: scale(1.02);
+}
+
+.elevator.moving {
+    animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); }
+    50% { box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5); }
 }
 
 .elevator.doors-open {
-    border-color: #f1c40f; /* Yellow border when doors are open */
+    background: linear-gradient(135deg, #f6ad55 0%, #ed8936 100%);
+}
+
+.elevator.doors-open::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 48%,
+        rgba(255, 255, 255, 0.3) 48%,
+        rgba(255, 255, 255, 0.3) 52%,
+        transparent 52%
+    );
+    border-radius: 8px;
 }
 
 .elevator-info {
     display: flex;
     flex-direction: column;
     align-items: center;
+    gap: 4px;
+    z-index: 1;
+}
+
+.elevator-id {
+    font-weight: 700;
+    font-size: 1rem;
+}
+
+.elevator-floor {
+    font-size: 0.85rem;
+    opacity: 0.95;
 }
 
 .elevator-status {
-    font-size: 0.6rem;
-    opacity: 0.8;
+    font-size: 0.75rem;
+    opacity: 0.85;
+    padding: 2px 8px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    margin-top: 4px;
+}
+
+.elevator-direction-indicator {
+    position: absolute;
+    top: -8px;
+    right: 8px;
+    font-size: 1.5rem;
+    animation: bounce 1s infinite;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
+}
+
+.target-floors {
+    display: flex;
+    gap: 4px;
+    margin-top: 6px;
+    flex-wrap: wrap;
+    justify-content: center;
+    z-index: 1;
+}
+
+.target-floor-badge {
+    background: rgba(255, 255, 255, 0.3);
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
 }
 
 /* --- Panel Visibility and Click Fix --- */
 .elevator-panel {
     position: absolute;
-    left: 100%;
-    top: 0;
-    background-color: rgba(44, 62, 80, 0.95);
-    border: 1px solid #fff;
-    border-radius: 5px;
-    padding: 10px;
-    z-index: 10;
-
-    /* FIX: Hide by default */
+    left: 105%;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.98);
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 16px;
+    z-index: 1000;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
     opacity: 0;
     visibility: hidden;
-    pointer-events: none; /* Make it unclickable when hidden */
-    transition: opacity 0.2s, visibility 0.2s;
+    pointer-events: none;
+    transition: all 0.3s ease;
+    min-width: 120px;
 }
 
-/* FIX: Show panel on hover of the ELEVATOR, not the shaft */
-.elevator:hover .elevator-panel {
+.elevator:hover .elevator-panel,
+.elevator-panel:hover {
     opacity: 1;
     visibility: visible;
-    pointer-events: auto; /* Make it clickable only when visible */
+    pointer-events: auto;
 }
 
 .panel-title {
-    font-size: 0.9rem;
-    font-weight: bold;
-    margin-bottom: 8px;
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 12px;
     text-align: center;
+    color: #2d3748;
 }
 
 .panel-buttons {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 5px;
+    gap: 8px;
 }
 
 .panel-button {
-    width: 30px;
-    height: 30px;
-    border: 1px solid #7f8c8d;
-    background-color: #ecf0f1;
-    color: #2c3e50;
+    width: 48px;
+    height: 48px;
+    border: 2px solid #cbd5e0;
+    background: white;
+    color: #2d3748;
     cursor: pointer;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.panel-button:hover {
+    background: #edf2f7;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .panel-button.selected {
-    background-color: #3498db;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
-    border-color: #2980b9;
+    border-color: #667eea;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.panel-button:active {
+    transform: translateY(0);
+}
+
+.panel-button:disabled {
+    background: #e2e8f0;
+    color: #a0aec0;
+    cursor: not-allowed;
+    border-color: #cbd5e0;
+    box-shadow: none;
+}
+
+.panel-button:disabled:hover {
+    transform: none;
+    box-shadow: none;
 }
