@@ -18,8 +18,8 @@ const Building: React.FC<BuildingProps> = ({ floors, elevators, callElevator, se
             <div
                 className="building-grid"
                 style={{
-                    gridTemplateColumns: `100px repeat(${elevators.length}, 1fr)`,
-                    gridTemplateRows: `repeat(${floors}, 1fr)`
+                    gridTemplateColumns: `120px repeat(${elevators.length}, 1fr)`,
+                    gridTemplateRows: `repeat(${floors}, minmax(120px, 1fr))`
                 }}
             >
                 {/* Render Floors and Buttons */}
