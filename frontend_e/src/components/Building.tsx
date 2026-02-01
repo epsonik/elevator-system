@@ -19,7 +19,7 @@ const Building: React.FC<BuildingProps> = ({ floors, elevators, callElevator, se
         setClickedButtons(prev => new Set(prev).add(buttonKey));
         callElevator(floor, direction);
         
-        // Remove the clicked state after 2 seconds to allow re-clicking
+        // Remove the clicked state after 2 seconds to allow reclicking
         setTimeout(() => {
             setClickedButtons(prev => {
                 const newSet = new Set(prev);
