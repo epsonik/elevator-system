@@ -22,10 +22,20 @@ function App() {
                 <div className="instructions">
                     <h3>How to Use</h3>
                     <p>
-                        <strong>Call an Elevator:</strong> Click the ▲ or ▼ buttons next to any floor. 
-                        <strong style={{marginLeft: '1rem'}}>Select Destination:</strong> Click on an elevator car to select your destination floor.
+                        <strong>📞 Call an Elevator:</strong> Click the ▲ (up) or ▼ (down) buttons next to any floor to request an elevator.
+                    </p>
+                    <p>
+                        <strong>🎯 Select Destination:</strong> Click on an elevator car, then choose your destination floor from the panel.
+                    </p>
+                    <p className="tip">
+                        💡 <em>Tip: Watch the elevators move in real-time and see which floors they're heading to!</em>
                     </p>
                 </div>
+                {!isConnected && (
+                    <div className="warning-message">
+                        ⚠️ Not connected to server. Make sure the backend is running on port 8080.
+                    </div>
+                )}
                 <Building
                     floors={NUM_FLOORS}
                     // The initial elevators array might be empty, so we create placeholders
