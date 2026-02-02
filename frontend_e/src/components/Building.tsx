@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Direction, Elevator } from '../types/Elevator';
 import ElevatorComponent from './ElevatorComponent';
 import './Building.css';
@@ -12,21 +12,45 @@ interface BuildingProps {
 
 const Building: React.FC<BuildingProps> = ({ floors, elevators, callElevator, selectFloor }) => {
     const floorNumbers = Array.from({ length: floors }, (_, i) => floors - 1 - i);
-    const [clickedButtons, setClickedButtons] = useState<Set<string>>(new Set());
+    const [activeHallCalls, setActiveHallCalls] = useState<Set<string>>(new Set());
+    const prevElevatorsRef = useRef<Elevator[]>([]);
+
+    // Check if an elevator has arrived at a floor (doors open or idle at that floor)
+    useEffect(() => {
+        if (activeHallCalls.size === 0) return;
+
+        const arrivedCalls = new Set<string>();
+        
+        activeHallCalls.forEach(callKey => {
+            const [floorStr] = callKey.split('-');
+            const floor = parseInt(floorStr, 10);
+            
+            // Check if any elevator has arrived at this floor with doors open
+            const elevatorArrived = elevators.some(elevator => 
+                elevator.currentFloor === floor && 
+                (elevator.status === 'DOORS_OPEN' || elevator.status === 'IDLE')
+            );
+            
+            if (elevatorArrived) {
+                arrivedCalls.add(callKey);
+            }
+        });
+
+        if (arrivedCalls.size > 0) {
+            setActiveHallCalls(prev => {
+                const newSet = new Set(prev);
+                arrivedCalls.forEach(key => newSet.delete(key));
+                return newSet;
+            });
+        }
+
+        prevElevatorsRef.current = elevators;
+    }, [elevators, activeHallCalls]);
 
     const handleCallElevator = (floor: number, direction: Direction) => {
         const buttonKey = `${floor}-${direction}`;
-        setClickedButtons(prev => new Set(prev).add(buttonKey));
+        setActiveHallCalls(prev => new Set(prev).add(buttonKey));
         callElevator(floor, direction);
-        
-        // Remove the clicked state after 2 seconds to allow reclicking
-        setTimeout(() => {
-            setClickedButtons(prev => {
-                const newSet = new Set(prev);
-                newSet.delete(buttonKey);
-                return newSet;
-            });
-        }, 2000);
     };
 
     return (
@@ -46,7 +70,7 @@ const Building: React.FC<BuildingProps> = ({ floors, elevators, callElevator, se
                             <div className="call-buttons">
                                 {floorNum < floors - 1 && (
                                     <button 
-                                        className={`call-btn up ${clickedButtons.has(`${floorNum}-UP`) ? 'active' : ''}`}
+                                        className={`call-btn up ${activeHallCalls.has(`${floorNum}-UP`) ? 'active' : ''}`}
                                         onClick={() => handleCallElevator(floorNum, "UP")}
                                         aria-label={`Call elevator to floor ${floorNum} going up`}
                                     >
@@ -55,7 +79,7 @@ const Building: React.FC<BuildingProps> = ({ floors, elevators, callElevator, se
                                 )}
                                 {floorNum > 0 && (
                                     <button 
-                                        className={`call-btn down ${clickedButtons.has(`${floorNum}-DOWN`) ? 'active' : ''}`}
+                                        className={`call-btn down ${activeHallCalls.has(`${floorNum}-DOWN`) ? 'active' : ''}`}
                                         onClick={() => handleCallElevator(floorNum, "DOWN")}
                                         aria-label={`Call elevator to floor ${floorNum} going down`}
                                     >

@@ -164,7 +164,7 @@
     position: absolute;
     left: 8%;
     width: 84%;
-    height: var(--floor-height, 10%);
+    /* height is set dynamically via inline style */
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     border: none;
     border-radius: 8px;
@@ -184,6 +184,12 @@
 .elevator:hover {
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
     transform: scale(1.02);
+}
+
+/* Ensure elevator with open panel appears on top of siblings */
+.elevator:focus-within,
+.elevator:has(.elevator-panel) {
+    z-index: 100;
 }
 
 .elevator.moving {
