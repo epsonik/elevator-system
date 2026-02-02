@@ -46,6 +46,7 @@ const ElevatorComponent: React.FC<ElevatorProps> = ({ elevator, totalFloors, sel
             className={`elevator ${isMoving ? 'moving' : ''} ${doorsOpen ? 'doors-open' : ''}`}
             style={{
                 top: `${topPosition}%`,
+                height: `${floorHeightPercentage}%`,
                 // Assign a different color per elevator for clarity
                 filter: `hue-rotate(${elevator.id * 60}deg)`
             }}
