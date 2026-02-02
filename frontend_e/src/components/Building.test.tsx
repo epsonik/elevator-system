@@ -133,4 +133,69 @@ describe('Building Component', () => {
         // After click, should have active class (no elevator is at floor 0)
         expect(upButton.className).toContain('active');
     });
+
+    test('button stays active when elevator is at floor but IDLE (not DOORS_OPEN)', () => {
+        // Elevator at floor 0 with IDLE status should NOT clear the hall call
+        const elevatorsIdleAtFloor0: Elevator[] = [
+            { id: 0, currentFloor: 0, direction: 'IDLE', status: 'IDLE', targetFloors: [] },
+        ];
+
+        const { rerender } = render(
+            <Building
+                floors={3}
+                elevators={mockElevatorsNotAtFloor0}
+                callElevator={mockCallElevator}
+                selectFloor={mockSelectFloor}
+            />
+        );
+
+        const upButton = screen.getByLabelText('Call elevator to floor 0 going up');
+        fireEvent.click(upButton);
+        expect(upButton.className).toContain('active');
+
+        // Re-render with elevator at floor 0 but IDLE (not arrived yet)
+        rerender(
+            <Building
+                floors={3}
+                elevators={elevatorsIdleAtFloor0}
+                callElevator={mockCallElevator}
+                selectFloor={mockSelectFloor}
+            />
+        );
+
+        // Button should still be active since elevator is IDLE, not DOORS_OPEN
+        expect(upButton.className).toContain('active');
+    });
+
+    test('button becomes inactive when elevator arrives with DOORS_OPEN', () => {
+        const elevatorsDoorsOpenAtFloor0: Elevator[] = [
+            { id: 0, currentFloor: 0, direction: 'IDLE', status: 'DOORS_OPEN', targetFloors: [] },
+        ];
+
+        const { rerender } = render(
+            <Building
+                floors={3}
+                elevators={mockElevatorsNotAtFloor0}
+                callElevator={mockCallElevator}
+                selectFloor={mockSelectFloor}
+            />
+        );
+
+        const upButton = screen.getByLabelText('Call elevator to floor 0 going up');
+        fireEvent.click(upButton);
+        expect(upButton.className).toContain('active');
+
+        // Re-render with elevator at floor 0 with DOORS_OPEN (arrived)
+        rerender(
+            <Building
+                floors={3}
+                elevators={elevatorsDoorsOpenAtFloor0}
+                callElevator={mockCallElevator}
+                selectFloor={mockSelectFloor}
+            />
+        );
+
+        // Button should now be inactive since elevator has arrived
+        expect(upButton.className).not.toContain('active');
+    });
 });

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Direction, Elevator } from '../types/Elevator';
 import ElevatorComponent from './ElevatorComponent';
 import './Building.css';
@@ -13,9 +13,8 @@ interface BuildingProps {
 const Building: React.FC<BuildingProps> = ({ floors, elevators, callElevator, selectFloor }) => {
     const floorNumbers = Array.from({ length: floors }, (_, i) => floors - 1 - i);
     const [activeHallCalls, setActiveHallCalls] = useState<Set<string>>(new Set());
-    const prevElevatorsRef = useRef<Elevator[]>([]);
 
-    // Check if an elevator has arrived at a floor (doors open or idle at that floor)
+    // Check if an elevator has arrived at a floor (doors open indicates actual arrival)
     useEffect(() => {
         if (activeHallCalls.size === 0) return;
 
@@ -26,9 +25,10 @@ const Building: React.FC<BuildingProps> = ({ floors, elevators, callElevator, se
             const floor = parseInt(floorStr, 10);
             
             // Check if any elevator has arrived at this floor with doors open
+            // Only DOORS_OPEN status indicates the elevator has actually arrived and is ready for passengers
             const elevatorArrived = elevators.some(elevator => 
                 elevator.currentFloor === floor && 
-                (elevator.status === 'DOORS_OPEN' || elevator.status === 'IDLE')
+                elevator.status === 'DOORS_OPEN'
             );
             
             if (elevatorArrived) {
@@ -43,8 +43,6 @@ const Building: React.FC<BuildingProps> = ({ floors, elevators, callElevator, se
                 return newSet;
             });
         }
-
-        prevElevatorsRef.current = elevators;
     }, [elevators, activeHallCalls]);
 
     const handleCallElevator = (floor: number, direction: Direction) => {
